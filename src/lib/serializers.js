@@ -152,3 +152,28 @@ export function toClientDTO(c, permissions) {
         permissions: p,
     };
 }
+
+export function toMeetingDTO(m, permissions = null) {
+    return {
+        id: m._id.toString(),
+        title: m.title,
+        date: m.date,
+        client: ref(m.client),
+        project: ref(m.project),
+        attendees: refList(m.attendees),
+        externalAttendees: m.externalAttendees || "",
+        agenda: m.agenda || "",
+        notes: m.notes || "",
+        decisions: m.decisions || "",
+        actionItems: (m.actionItems || []).map((a) => ({
+            id: a._id.toString(),
+            text: a.text,
+            assignee: ref(a.assignee),
+            dueDate: a.dueDate,
+            task: a.task?._id ? { id: a.task._id.toString(), title: a.task.title, status: a.task.status } : null,
+        })),
+        createdBy: ref(m.createdBy),
+        createdAt: m.createdAt,
+        permissions: permissions || { canEdit: false, canCreateTasks: false },
+    };
+}

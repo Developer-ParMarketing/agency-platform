@@ -27,3 +27,10 @@ export function formatDateTime(d) {
 export function formatINR(amount) {
     return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount || 0);
 }
+
+// For <input type="datetime-local"> which needs local "YYYY-MM-DDTHH:mm"
+export function toInputDateTime(d) {
+    if (!d) return "";
+    const dt = new Date(d);
+    return new Date(dt.getTime() - dt.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}

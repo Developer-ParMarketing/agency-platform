@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/Badge";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { BILLING_LABELS } from "@/lib/constants";
 import { formatDate, formatINR } from "@/lib/format";
+import MeetingsList from "@/components/meetings/MeetingsList";
 
 const card = "space-y-3 rounded-xl border bg-white p-5";
 
@@ -119,9 +120,7 @@ export default function ClientDetail({ clientId }) {
                         ))}
                     </div>
 
-                    <div className="rounded-xl border border-dashed bg-white p-6 text-center text-sm text-gray-500">
-                        Meetings and discussions will appear here (next step).
-                    </div>
+                    <MeetingsList clientId={client.id} compact />
                 </div>
 
                 <div className="space-y-4">

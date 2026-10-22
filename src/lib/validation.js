@@ -175,6 +175,46 @@ const clientFields = {
 
 export const createClientSchema = z.object(clientFields).partial().required({ name: true });
 export const updateClientSchema = z.object({ ...clientFields, isArchived: z.boolean() }).partial();
+
+// ---------- Meetings ----------
+const optionalPerson = z.union([objectId, z.literal(""), z.null()]).optional().transform((v) => v || null);
+
+const actionItemSchema = z.object({
+    id: z.string().optional(), // existing item id (keeps its task link)
+    text: z.string().trim().min(1, "Action item can't be empty").max(500),
+    assignee: optionalPerson,
+    dueDate: nullableDate.optional(),
+});
+
+const meetingFields = {
+    title: z.string().trim().min(2, "Meeting title is too short").max(200),
+    date: z
+        .string()
+        .min(1, "Pick the meeting date")
+        .transform((v) => new Date(v))
+        .refine((d) => !isNaN(d.getTime()), "Invalid meeting date"),
+    client: nullableId,
+    project: nullableId,
+    attendees: idList,
+    externalAttendees: z.string().trim().max(500),
+    agenda: z.string().trim().max(5000),
+    notes: z.string().trim().max(20000),
+    decisions: z.string().trim().max(10000),
+    actionItems: z.array(actionItemSchema).max(50),
+};
+
+export const createMeetingSchema = z
+    .object(meetingFields)
+    .partial()
+    .required({ title: true, date: true })
+    .refine((d) => d.client || d.project, { message: "Link the meeting to a client or a project" });
+
+export const updateMeetingSchema = z.object(meetingFields).partial();
+
+export const taskFromActionSchema = z.object({
+    project: objectId.optional(),
+    priority: z.enum(PRIORITIES).optional().default("medium"),
+});
 // ---------- Helper ----------
 export function validate(schema, data) {
     const result = schema.safeParse(data);
