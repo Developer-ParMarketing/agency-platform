@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { HttpError } from "@/lib/auth-helpers";
-import { ROLE_LIST, PROJECT_STATUSES, TASK_STATUSES, PRIORITIES, APPROVAL_DECISIONS } from "@/lib/constants";
+import {
+    ROLE_LIST, PROJECT_STATUSES, TASK_STATUSES, PRIORITIES, APPROVAL_DECISIONS,
+    CLIENT_STATUSES, BILLING_CYCLES,
+} from "@/lib/constants";
 
 // ---------- Shared ----------
 export const objectId = z.string().regex(/^[a-f\d]{24}$/i, "Invalid id");
@@ -138,6 +141,40 @@ export const createAssetSchema = z.object({
     task: z.union([objectId, z.literal("")]).optional().transform((v) => v || null),
 });
 
+// ---------- Clients ----------
+const contactSchema = z.object({
+    name: z.string().trim().min(1, "Contact name is required").max(80),
+    role: z.string().trim().max(80).optional().default(""),
+    phone: z.string().trim().max(20).optional().default(""),
+    email: z.union([z.string().trim().email("Enter a valid contact email"), z.literal("")]).optional().default(""),
+});
+
+const dealSchema = z.object({
+    services: z.array(z.string().trim().min(1).max(80)).max(30).optional().default([]),
+    budget: z.coerce.number().min(0, "Budget can't be negative").max(1e10).optional().default(0),
+    billingCycle: z.enum(BILLING_CYCLES).optional().default("monthly"),
+    startDate: nullableDate.optional(),
+    endDate: nullableDate.optional(),
+    terms: z.string().trim().max(5000).optional().default(""),
+});
+
+// No top-level defaults, so a partial update never resets other fields
+const clientFields = {
+    name: z.string().trim().min(2, "Client name is too short").max(120),
+    industry: z.string().trim().max(80),
+    website: z.string().trim().max(200),
+    status: z.enum(CLIENT_STATUSES),
+    contacts: z.array(contactSchema).max(20),
+    accountManager: nullableId,
+    deal: dealSchema,
+    notes: z.string().trim().max(10000),
+    brandGuidelines: z.string().trim().max(10000),
+    accessUsers: idList,
+    dealVisibleTo: idList,
+};
+
+export const createClientSchema = z.object(clientFields).partial().required({ name: true });
+export const updateClientSchema = z.object({ ...clientFields, isArchived: z.boolean() }).partial();
 // ---------- Helper ----------
 export function validate(schema, data) {
     const result = schema.safeParse(data);

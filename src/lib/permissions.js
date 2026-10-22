@@ -14,6 +14,7 @@ const PERMISSIONS = {
     "reports.company": [ADMIN],
     "reports.team": [ADMIN, MANAGER],
     "settings.manage": [ADMIN],
+    "clients.create": [ADMIN],
 };
 
 export function can(user, action) {

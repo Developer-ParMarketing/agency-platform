@@ -129,3 +129,26 @@ export function toApprovalDTO(a) {
         reviewer: ref(a.reviewer),
     };
 }
+
+export function toClientDTO(c, permissions) {
+    const p = permissions || { canEdit: false, canEditDeal: false, canManageAccess: false, canSeeDeal: false };
+    return {
+        id: c._id.toString(),
+        name: c.name,
+        industry: c.industry || "",
+        website: c.website || "",
+        status: c.status,
+        contacts: c.contacts || [],
+        accountManager: ref(c.accountManager),
+        notes: c.notes || "",
+        brandGuidelines: c.brandGuidelines || "",
+        isArchived: c.isArchived,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        // Deal data is removed entirely for people who can't see it
+        deal: p.canSeeDeal ? c.deal : null,
+        accessUsers: p.canManageAccess ? refList(c.accessUsers) : null,
+        dealVisibleTo: p.canManageAccess ? refList(c.dealVisibleTo) : null,
+        permissions: p,
+    };
+}

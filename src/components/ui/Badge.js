@@ -16,6 +16,9 @@ const STATUS_STYLES = {
     changes_requested: "bg-amber-100 text-amber-800",
     rejected: "bg-red-100 text-red-700",
     approved: "bg-green-100 text-green-700",
+    lead: "bg-sky-100 text-sky-700",
+    paused: "bg-yellow-100 text-yellow-800",
+    closed: "bg-gray-200 text-gray-700",
 };
 
 const PRIORITY_STYLES = {

@@ -35,6 +35,12 @@ export const STATUS_LABELS = {
     changes_requested: "Changes requested",
     rejected: "Rejected",
     approved: "Approved",
+    lead: "Lead",
+    paused: "Paused",
+    closed: "Closed",
 };
 export const ASSET_STATUSES = ["pending_manager", "pending_admin", "changes_requested", "rejected", "approved"];
 export const APPROVAL_DECISIONS = ["approved", "changes_requested", "rejected"];
+export const CLIENT_STATUSES = ["lead", "active", "paused", "closed"];
+export const BILLING_CYCLES = ["monthly", "quarterly", "yearly", "one_time"];
+export const BILLING_LABELS = { monthly: "Monthly", quarterly: "Quarterly", yearly: "Yearly", one_time: "One-time" };
