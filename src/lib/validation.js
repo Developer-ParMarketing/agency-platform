@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { HttpError } from "@/lib/auth-helpers";
-import { ROLE_LIST, PROJECT_STATUSES, PRIORITIES } from "@/lib/constants";
+import { ROLE_LIST, PROJECT_STATUSES, TASK_STATUSES, PRIORITIES } from "@/lib/constants";
 
 // ---------- Shared ----------
 export const objectId = z.string().regex(/^[a-f\d]{24}$/i, "Invalid id");
@@ -93,6 +93,41 @@ export const updateProjectSchema = z
         isArchived: z.boolean().optional(),
     })
     .refine(datesInOrder, dateOrderMsg);
+
+
+// ---------- Tasks ----------
+const hours = (max) => z.coerce.number().min(0, "Hours can't be negative").max(max);
+
+export const createTaskSchema = z
+    .object({
+        title: z.string().trim().min(2, "Task title is too short").max(200),
+        description: z.string().trim().max(5000).optional().default(""),
+        project: objectId,
+        assignedTo: objectId,
+        status: z.enum(TASK_STATUSES).optional().default("todo"),
+        priority: z.enum(PRIORITIES).optional().default("medium"),
+        startDate: nullableDate.optional(),
+        dueDate: nullableDate.optional(),
+        estimatedHours: hours(1000).optional().default(0),
+    })
+    .refine(datesInOrder, dateOrderMsg);
+
+export const updateTaskSchema = z.object({
+    title: z.string().trim().min(2, "Task title is too short").max(200).optional(),
+    description: z.string().trim().max(5000).optional(),
+    assignedTo: objectId.optional(),
+    status: z.enum(TASK_STATUSES).optional(),
+    priority: z.enum(PRIORITIES).optional(),
+    startDate: nullableDate.optional(),
+    dueDate: nullableDate.optional(),
+    estimatedHours: hours(1000).optional(),
+});
+
+export const taskProgressSchema = z.object({
+    note: z.string().trim().min(1, "Write what you worked on").max(2000),
+    hoursSpent: hours(24).optional().default(0),
+    status: z.enum(TASK_STATUSES).optional(),
+});
 
 // ---------- Helper ----------
 export function validate(schema, data) {

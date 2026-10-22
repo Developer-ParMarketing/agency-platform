@@ -45,3 +45,37 @@ export function toProjectDTO(p, progress = null) {
         progress: progress || { total: 0, done: 0, percent: 0, byStatus: {} },
     };
 }
+
+export function toTaskDTO(t, permissions = null) {
+    return {
+        id: t._id.toString(),
+        title: t.title,
+        description: t.description || "",
+        status: t.status,
+        priority: t.priority,
+        startDate: t.startDate,
+        dueDate: t.dueDate,
+        estimatedHours: t.estimatedHours || 0,
+        loggedHours: t.loggedHours || 0,
+        completedAt: t.completedAt,
+        createdAt: t.createdAt,
+        updatedAt: t.updatedAt,
+        project: ref(t.project),
+        assignedTo: ref(t.assignedTo),
+        assignedBy: ref(t.assignedBy),
+        team: t.team?._id ? { id: t.team._id.toString(), name: t.team.name, color: t.team.color } : null,
+        permissions: permissions || { canEdit: false, canChangeStatus: false, canAddUpdate: false },
+    };
+}
+
+export function toTaskUpdateDTO(u) {
+    return {
+        id: u._id.toString(),
+        note: u.note,
+        hoursSpent: u.hoursSpent || 0,
+        statusFrom: u.statusFrom,
+        statusTo: u.statusTo,
+        createdAt: u.createdAt,
+        user: ref(u.user),
+    };
+}
