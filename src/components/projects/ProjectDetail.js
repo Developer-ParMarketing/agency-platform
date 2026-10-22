@@ -14,6 +14,7 @@ export default function ProjectDetail({ projectId, me }) {
     const [canEdit, setCanEdit] = useState(false);
     const [users, setUsers] = useState([]);
     const [teams, setTeams] = useState([]);
+    const [clients, setClients] = useState([]);
     const [error, setError] = useState("");
     const [showForm, setShowForm] = useState(false);
 
@@ -35,9 +36,10 @@ export default function ProjectDetail({ projectId, me }) {
 
     async function openForm() {
         if (!users.length) {
-            const [uRes, tRes] = await Promise.all([fetch("/api/users"), fetch("/api/teams")]);
+            const [uRes, tRes, cRes] = await Promise.all([fetch("/api/users"), fetch("/api/teams"), fetch("/api/clients")]);
             setUsers((await uRes.json()).users || []);
             setTeams((await tRes.json()).teams || []);
+            setClients((await cRes.json()).clients || []);
         }
         setShowForm(true);
     }
@@ -88,6 +90,7 @@ export default function ProjectDetail({ projectId, me }) {
                     <p className="text-sm text-gray-500">
                         {formatDate(project.startDate)} → <span className={overdue ? "font-medium text-red-600" : ""}>{formatDate(project.dueDate)}{overdue && " (overdue)"}</span>
                         {" · "}Created by {project.createdBy?.name}
+                        {project.client && <> · Client: <Link href={`/clients/${project.client.id}`} className="text-indigo-600 hover:underline">{project.client.name}</Link></>}
                     </p>
                 </div>
 
@@ -149,6 +152,7 @@ export default function ProjectDetail({ projectId, me }) {
                         setProject(saved);
                         setShowForm(false);
                     }}
+                    clients={clients}
                 />
             )}
         </div>

@@ -79,6 +79,7 @@ export const createProjectSchema = z
         priority: z.enum(PRIORITIES).optional().default("medium"),
         startDate: nullableDate.optional(),
         dueDate: nullableDate.optional(),
+        client: nullableId.optional(),
     })
     .refine(datesInOrder, dateOrderMsg);
 
@@ -94,6 +95,7 @@ export const updateProjectSchema = z
         startDate: nullableDate.optional(),
         dueDate: nullableDate.optional(),
         isArchived: z.boolean().optional(),
+        client: nullableId.optional(),
     })
     .refine(datesInOrder, dateOrderMsg);
 

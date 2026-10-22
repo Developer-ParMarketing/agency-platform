@@ -5,6 +5,9 @@ import { projectFilterFor, canEditProject } from "@/services/access";
 import { findProjectsWithRefs, progressFor, assertProjectRefs } from "@/services/projects";
 import { connectDB } from "@/lib/db";
 import Project from "@/models/Project";
+import { assertClientAccess } from "@/services/clients";
+import Task from "@/models/Task";
+import Asset from "@/models/Asset";
 
 async function loadVisibleProject(me, id) {
     validate(objectId, id);
@@ -38,8 +41,17 @@ export async function PATCH(request, { params }) {
 
         const data = validate(updateProjectSchema, await request.json());
         await assertProjectRefs(data);
+        await assertClientAccess(me, data.client);
 
         await Project.updateOne({ _id: id }, { $set: data });
+
+        // If the client changed, move the project's tasks and assets with it
+        if (data.client !== undefined && (data.client || null) !== (project.client?._id?.toString() ?? null)) {
+            await Promise.all([
+                Task.updateMany({ project: id }, { client: data.client || null }),
+                Asset.updateMany({ project: id }, { client: data.client || null }),
+            ]);
+        }
         const [updated] = await findProjectsWithRefs({ _id: id });
         const progress = await progressFor([id]);
         return Response.json({ project: toProjectDTO(updated, progress[id]) });

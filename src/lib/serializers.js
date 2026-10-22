@@ -32,6 +32,7 @@ export function toProjectDTO(p, progress = null) {
         id: p._id.toString(),
         name: p.name,
         description: p.description || "",
+        client: ref(p.client),
         status: p.status,
         priority: p.priority,
         startDate: p.startDate,

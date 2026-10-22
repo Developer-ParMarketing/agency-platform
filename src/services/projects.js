@@ -8,6 +8,7 @@ import User from "@/models/User";
 
 export function findProjectsWithRefs(filter = {}) {
     return Project.find(filter)
+        .populate("client", "name")
         .populate("teams", "name color")
         .populate("managers", "name")
         .populate("members", "name")

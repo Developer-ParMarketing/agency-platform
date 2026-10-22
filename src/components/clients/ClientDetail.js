@@ -8,6 +8,7 @@ import ProgressBar from "@/components/ui/ProgressBar";
 import { BILLING_LABELS } from "@/lib/constants";
 import { formatDate, formatINR } from "@/lib/format";
 import MeetingsList from "@/components/meetings/MeetingsList";
+import ClientTimeline from "./ClientTimeline";
 
 const card = "space-y-3 rounded-xl border bg-white p-5";
 
@@ -135,7 +136,7 @@ export default function ClientDetail({ clientId }) {
                             </div>
                         ))}
                     </div>
-
+                    <ClientTimeline clientId={client.id} />
                     {client.accessUsers && (
                         <div className={card}>
                             <h2 className="font-semibold text-gray-900">Access</h2>

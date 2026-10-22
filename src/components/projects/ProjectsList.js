@@ -12,6 +12,7 @@ export default function ProjectsList({ me, canCreate }) {
     const [projects, setProjects] = useState([]);
     const [users, setUsers] = useState([]);
     const [teams, setTeams] = useState([]);
+    const [clients, setClients] = useState([]);
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -38,9 +39,10 @@ export default function ProjectsList({ me, canCreate }) {
 
     async function openForm() {
         if (!users.length) {
-            const [uRes, tRes] = await Promise.all([fetch("/api/users"), fetch("/api/teams")]);
+            const [uRes, tRes, cRes] = await Promise.all([fetch("/api/users"), fetch("/api/teams"), fetch("/api/clients")]);
             setUsers((await uRes.json()).users || []);
             setTeams((await tRes.json()).teams || []);
+            setClients((await cRes.json()).clients || []);
         }
         setShowForm(true);
     }
@@ -83,7 +85,10 @@ export default function ProjectsList({ me, canCreate }) {
                     return (
                         <Link key={p.id} href={`/projects/${p.id}`} className="block space-y-4 rounded-xl border bg-white p-5 hover:border-indigo-300 hover:shadow-sm">
                             <div className="flex items-start justify-between gap-3">
-                                <h2 className="font-semibold text-gray-900">{p.name}</h2>
+                                <div>
+                                    <h2 className="font-semibold text-gray-900">{p.name}</h2>
+                                    {p.client && <p className="text-xs text-gray-500">{p.client.name}</p>}
+                                </div>
                                 <StatusBadge status={p.status} />
                             </div>
 
@@ -126,6 +131,7 @@ export default function ProjectsList({ me, canCreate }) {
                         setProjects((prev) => [saved, ...prev]);
                         setShowForm(false);
                     }}
+                    clients={clients}
                 />
             )}
         </div>

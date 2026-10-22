@@ -7,6 +7,7 @@ import { projectFilterFor } from "@/services/access";
 import { findProjectsWithRefs, progressFor, assertProjectRefs } from "@/services/projects";
 import { connectDB } from "@/lib/db";
 import Project from "@/models/Project";
+import { assertClientAccess } from "@/services/clients";
 
 export async function GET(request) {
     try {
@@ -45,7 +46,7 @@ export async function POST(request) {
 
         await connectDB();
         await assertProjectRefs(data);
-
+        await assertClientAccess(me, data.client);
         const created = await Project.create({ ...data, createdBy: me.id });
         const [project] = await findProjectsWithRefs({ _id: created._id });
         return Response.json({ project: toProjectDTO(project) }, { status: 201 });

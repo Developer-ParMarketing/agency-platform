@@ -45,3 +45,10 @@ export async function assertActiveUsers(ids = []) {
     const count = await User.countDocuments({ _id: { $in: unique }, isActive: true });
     if (count !== unique.length) throw new HttpError(400, "One of the selected people isn't an active user.");
 }
+
+// Throws unless the user can see this client (or clientId is empty)
+export async function assertClientAccess(user, clientId) {
+    if (!clientId) return;
+    const ok = await Client.exists({ $and: [{ _id: clientId }, clientFilterFor(user)] });
+    if (!ok) throw new HttpError(400, "You don't have access to that client.");
+}

@@ -8,11 +8,12 @@ import { toInputDate } from "@/lib/format";
 const input = "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500";
 const label = "text-sm font-medium text-gray-700";
 
-export default function ProjectForm({ project, users, teams, me, onClose, onSaved }) {
+export default function ProjectForm({ project, users, teams, clients = [], me, onClose, onSaved }) {
     const isEdit = !!project;
     const [form, setForm] = useState({
         name: project?.name || "",
         description: project?.description || "",
+        client: project?.client?.id || "",
         status: project?.status || "planning",
         priority: project?.priority || "medium",
         startDate: toInputDate(project?.startDate),
@@ -67,7 +68,13 @@ export default function ProjectForm({ project, users, teams, me, onClose, onSave
                     <label className={label}>Description</label>
                     <textarea className={input} rows={3} value={form.description} onChange={set("description")} />
                 </div>
-
+                <div className="space-y-1">
+                    <label className={label}>Client</label>
+                    <select className={input} value={form.client} onChange={set("client")}>
+                        <option value="">Internal project (no client)</option>
+                        {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                         <label className={label}>Status</label>
