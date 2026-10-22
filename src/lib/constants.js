@@ -30,4 +30,11 @@ export const STATUS_LABELS = {
     in_review: "In review",
     done: "Done",
     blocked: "Blocked",
+    pending_manager: "Waiting for manager",
+    pending_admin: "Waiting for admin",
+    changes_requested: "Changes requested",
+    rejected: "Rejected",
+    approved: "Approved",
 };
+export const ASSET_STATUSES = ["pending_manager", "pending_admin", "changes_requested", "rejected", "approved"];
+export const APPROVAL_DECISIONS = ["approved", "changes_requested", "rejected"];

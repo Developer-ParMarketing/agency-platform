@@ -129,6 +129,15 @@ export const taskProgressSchema = z.object({
     status: z.enum(TASK_STATUSES).optional(),
 });
 
+
+// ---------- Assets ----------
+export const createAssetSchema = z.object({
+    title: z.string().trim().max(200).optional().default(""),
+    description: z.string().trim().max(5000).optional().default(""),
+    project: objectId,
+    task: z.union([objectId, z.literal("")]).optional().transform((v) => v || null),
+});
+
 // ---------- Helper ----------
 export function validate(schema, data) {
     const result = schema.safeParse(data);

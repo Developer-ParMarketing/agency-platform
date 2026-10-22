@@ -62,3 +62,21 @@ export function canAssignTo(user, assignee) {
     }
     return false; // members don't assign tasks
 }
+
+// Which assets can this user see?
+export async function assetFilterFor(user) {
+    if (user.role === ROLES.ADMIN) return {};
+
+    if (user.role === ROLES.MANAGER) {
+        const [reports, projects] = await Promise.all([
+            User.distinct("_id", { manager: user.id }),
+            Project.distinct("_id", await projectFilterFor(user)),
+        ]);
+        const or = [{ uploadedBy: user.id }, { uploadedBy: { $in: reports } }, { project: { $in: projects } }];
+        if (user.team) or.push({ team: user.team });
+        return { $or: or };
+    }
+
+    const memberProjects = await Project.distinct("_id", { members: user.id });
+    return { $or: [{ uploadedBy: user.id }, { project: { $in: memberProjects } }] };
+}

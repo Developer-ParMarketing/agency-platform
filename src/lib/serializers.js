@@ -79,3 +79,53 @@ export function toTaskUpdateDTO(u) {
         user: ref(u.user),
     };
 }
+
+export function toAssetDTO(a, permissions = null) {
+    return {
+        id: a._id.toString(),
+        title: a.title,
+        description: a.description || "",
+        type: a.type,
+        status: a.status,
+        currentVersion: a.currentVersion,
+        current: {
+            fileName: a.current?.fileName,
+            fileSize: a.current?.fileSize,
+            mimeType: a.current?.mimeType,
+        },
+        approvedAt: a.approvedAt,
+        createdAt: a.createdAt,
+        updatedAt: a.updatedAt,
+        project: ref(a.project),
+        task: a.task?._id ? { id: a.task._id.toString(), name: a.task.title } : null,
+        uploadedBy: ref(a.uploadedBy),
+        team: a.team?._id ? { id: a.team._id.toString(), name: a.team.name, color: a.team.color } : null,
+        permissions: permissions || { canReview: false, canUploadVersion: false, canEdit: false },
+    };
+}
+
+export function toAssetVersionDTO(v) {
+    return {
+        id: v._id.toString(),
+        version: v.version,
+        fileName: v.fileName,
+        fileSize: v.fileSize,
+        mimeType: v.mimeType,
+        changeNote: v.changeNote || "",
+        createdAt: v.createdAt,
+        uploadedBy: ref(v.uploadedBy),
+    };
+}
+
+export function toApprovalDTO(a) {
+    return {
+        id: a._id.toString(),
+        version: a.version,
+        stage: a.stage,
+        decision: a.decision,
+        keyPoints: a.keyPoints || [],
+        comment: a.comment || "",
+        createdAt: a.createdAt,
+        reviewer: ref(a.reviewer),
+    };
+}
