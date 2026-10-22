@@ -54,3 +54,13 @@ export function assetPermissions(user, asset) {
         canEdit: isUploader || isAdmin,
     };
 }
+
+// Works out the review stage and the asset's next status for a decision
+export function reviewOutcome(user, asset, decision) {
+    const stage = user.role === ROLES.ADMIN ? "admin" : "manager";
+
+    if (decision === "approved") {
+        return { stage, nextStatus: stage === "manager" ? "pending_admin" : "approved" };
+    }
+    return { stage, nextStatus: decision }; // "changes_requested" or "rejected"
+}

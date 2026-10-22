@@ -6,17 +6,25 @@ import Task from "@/models/Task";
 const ids = (list) => list.map((x) => x.toString());
 
 // Which projects can this user see?
+// Which projects can this user see?
 export async function projectFilterFor(user) {
     if (user.role === ROLES.ADMIN) return {};
 
+    // projects where this user has at least one task
+    const withMyTasks = await Task.distinct("project", { assignedTo: user.id });
+
     if (user.role === ROLES.MANAGER) {
-        const or = [{ managers: user.id }, { members: user.id }, { createdBy: user.id }];
+        const or = [
+            { managers: user.id },
+            { members: user.id },
+            { createdBy: user.id },
+            { _id: { $in: withMyTasks } },
+        ];
         if (user.team) or.push({ teams: user.team });
         return { $or: or };
     }
 
     // member: projects they were added to, or where they have a task
-    const withMyTasks = await Task.distinct("project", { assignedTo: user.id });
     return { $or: [{ members: user.id }, { _id: { $in: withMyTasks } }] };
 }
 

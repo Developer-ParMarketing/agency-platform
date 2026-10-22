@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { HttpError } from "@/lib/auth-helpers";
-import { ROLE_LIST, PROJECT_STATUSES, TASK_STATUSES, PRIORITIES } from "@/lib/constants";
+import { ROLE_LIST, PROJECT_STATUSES, TASK_STATUSES, PRIORITIES, APPROVAL_DECISIONS } from "@/lib/constants";
 
 // ---------- Shared ----------
 export const objectId = z.string().regex(/^[a-f\d]{24}$/i, "Invalid id");
@@ -146,3 +146,23 @@ export function validate(schema, data) {
     }
     return result.data;
 }
+
+export const reviewAssetSchema = z
+    .object({
+        decision: z.enum(APPROVAL_DECISIONS),
+        keyPoints: z.array(z.string().trim().min(1).max(300)).max(20).optional().default([]),
+        comment: z.string().trim().max(3000).optional().default(""),
+    })
+    .refine((d) => d.decision === "approved" || d.comment || d.keyPoints.length, {
+        message: "Add a comment or key points explaining what needs to change",
+    });
+
+export const updateAssetSchema = z.object({
+    title: z.string().trim().min(1, "Title can't be empty").max(200).optional(),
+    description: z.string().trim().max(5000).optional(),
+    isArchived: z.boolean().optional(),
+});
+
+export const newVersionSchema = z.object({
+    changeNote: z.string().trim().max(1000).optional().default(""),
+});
