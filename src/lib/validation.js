@@ -217,6 +217,21 @@ export const taskFromActionSchema = z.object({
     project: objectId.optional(),
     priority: z.enum(PRIORITIES).optional().default("medium"),
 });
+
+// ---------- Reports ----------
+// ---------- Reports ----------
+const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD dates");
+
+export const reportQuerySchema = z
+    .object({
+        type: z.enum(["employee", "team", "company"]),
+        user: objectId.optional(),
+        team: objectId.optional(),
+        from: isoDay,
+        to: isoDay,
+    })
+    .refine((q) => q.from <= q.to, { message: "The start date must be before the end date" });
+
 // ---------- Helper ----------
 export function validate(schema, data) {
     const result = schema.safeParse(data);
