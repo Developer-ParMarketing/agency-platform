@@ -12,6 +12,7 @@ export const NAV_ITEMS = [
     { href: "/reports", label: "Reports", roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { href: "/admin/users", label: "Users", roles: [ROLES.ADMIN] },
     { href: "/admin/teams", label: "Teams", roles: [ROLES.ADMIN] },
+    { href: "/profile", label: "My profile", roles: ALL },
 ];
 
 export function navForRole(role) {
