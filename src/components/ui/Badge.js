@@ -11,6 +11,11 @@ const STATUS_STYLES = {
     in_review: "bg-yellow-100 text-yellow-800",
     done: "bg-green-100 text-green-700",
     blocked: "bg-red-100 text-red-700",
+    pending_manager: "bg-yellow-100 text-yellow-800",
+    pending_admin: "bg-orange-100 text-orange-700",
+    changes_requested: "bg-amber-100 text-amber-800",
+    rejected: "bg-red-100 text-red-700",
+    approved: "bg-green-100 text-green-700",
 };
 
 const PRIORITY_STYLES = {
