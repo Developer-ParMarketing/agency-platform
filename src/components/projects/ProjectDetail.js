@@ -7,6 +7,7 @@ import { StatusBadge, PriorityBadge } from "@/components/ui/Badge";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { TASK_STATUSES, STATUS_LABELS } from "@/lib/constants";
 import { formatDate, isOverdue } from "@/lib/format";
+import ProjectTasks from "@/components/tasks/ProjectTasks";
 
 export default function ProjectDetail({ projectId, me }) {
     const [project, setProject] = useState(null);
@@ -130,9 +131,12 @@ export default function ProjectDetail({ projectId, me }) {
                 </div>
             </div>
 
-            <div className="rounded-xl border border-dashed bg-white p-8 text-center text-gray-500">
-                Tasks for this project will appear here (next step).
-            </div>
+            <ProjectTasks
+                projectId={projectId}
+                me={me}
+                canCreate={me.role !== "member" && !project.isArchived}
+                onChanged={load}
+            />
 
             {showForm && (
                 <ProjectForm

@@ -14,3 +14,12 @@ export function isOverdue(dueDate, status) {
     endOfDue.setHours(23, 59, 59, 999);
     return endOfDue < new Date();
 }
+export function formatDateTime(d) {
+    if (!d) return "—";
+    return new Date(d).toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        hour: "numeric",
+        minute: "2-digit",
+    });
+}
